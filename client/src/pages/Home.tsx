@@ -1,10 +1,14 @@
+import DashboardLayout from "../layouts/DashboardLayout";
+
 const Home = () => {
   return (
-    <div>
-      <h1>Home</h1>
-      <p>Welcome to your dashboard.</p>
-    </div>
+    <DashboardLayout title="Home">
+      <h2>Hello</h2>
+      <p>Server here.</p>
+    </DashboardLayout>
   );
 };
 
 export default Home;
+
+

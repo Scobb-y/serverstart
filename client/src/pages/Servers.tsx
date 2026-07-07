@@ -12,7 +12,7 @@ export default function Servers() {
 
 
   return (
-    <DashboardLayout title="Minecraft Servers">
+    <DashboardLayout title="Servers">
       <ServersGrid servers={servers} />
     </DashboardLayout>
   );
