@@ -1,50 +1,53 @@
-import { startServer } from "../api/client";
+import { useEffect, useState } from "react";
+import {
+  startServer,
+  stopServer,
+  restartServer,
+  sendCommand,
+  getStatus,
+  streamLogs
+} from "../api/client";
 
-interface ServerCardProps {
-  name: string;
-}
+export default function ServerCard({ name }: { name: string }) {
+  const [running, setRunning] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [command, setCommand] = useState("");
 
-export default function ServerCard({ name }: ServerCardProps) {
-  async function handleStart() {
-    try {
-      await startServer(name);
-      console.log(`Started server: ${name}`);
-    } catch (err) {
-      console.error("Failed to start server:", err);
-    }
-  }
+  useEffect(() => {
+    getStatus(name).then(s => setRunning(s.running));
+
+    const evt = streamLogs(name, line => {
+      setLogs(prev => [...prev, line]);
+    });
+
+    return () => evt.close();
+  }, [name]);
 
   return (
     <div className="server-card">
       <h3>{name}</h3>
 
-      <button onClick={handleStart}>Start</button>
+      <p>Status: {running ? "🟢 Running" : "🔴 Stopped"}</p>
 
-      <style>{`
-        .server-card {
-          background: white;
-          border-radius: 8px;
-          padding: 1rem;
-          border: 1px solid #ddd;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
+      <div className="buttons">
+        <button onClick={() => startServer(name)}>Start</button>
+        <button onClick={() => stopServer(name)}>Stop</button>
+        <button onClick={() => restartServer(name)}>Restart</button>
+      </div>
 
-        button {
-          padding: 0.5rem 1rem;
-          border: none;
-          background: #4caf50;
-          color: white;
-          border-radius: 4px;
-          cursor: pointer;
-        }
+      <div className="command-box">
+        <input
+          value={command}
+          onChange={e => setCommand(e.target.value)}
+          placeholder="Enter command..."
+        />
+        <button onClick={() => sendCommand(name, command)}>Send</button>
+      </div>
 
-        button:hover {
-          background: #45a049;
-        }
-      `}</style>
+      <div className="logs">
+        <h4>Logs</h4>
+        <pre>{logs.join("\n")}</pre>
+      </div>
     </div>
   );
 }
-
