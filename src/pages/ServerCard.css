@@ -1,0 +1,57 @@
+.server-card {
+  background: #141414;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.server-card.online {
+  border-color: #2ecc71;
+}
+
+.server-card.offline {
+  border-color: #e74c3c;
+}
+
+.server-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.server-card.online .status-dot {
+  background: #2ecc71;
+}
+
+.server-card.offline .status-dot {
+  background: #e74c3c;
+}
+
+.server-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.server-actions button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #2a2a2a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.server-actions button:hover {
+  background: #3a3a3a;
+}
