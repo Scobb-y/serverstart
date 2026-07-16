@@ -20,13 +20,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="main">
         <header className="topbar">
           <input className="search" placeholder="Search..." />
-          <div className="topbar-actions">
-          </div>
         </header>
 
         <div className="content">{children}</div>
       </div>
-      {children}
     </div>
   );
 }
