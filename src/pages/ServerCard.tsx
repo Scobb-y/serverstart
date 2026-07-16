@@ -4,7 +4,6 @@ interface ServerCardProps {
   name: string;
   status: "online" | "offline";
   players: number;
-  tps: number;
   ram: number;
 }
 
@@ -12,7 +11,6 @@ export default function ServerCard({
   name,
   status,
   players,
-  tps,
   ram,
 }: ServerCardProps) {
   return (
@@ -24,7 +22,6 @@ export default function ServerCard({
 
       <div className="server-stats">
         <p><strong>Players:</strong> {players}</p>
-        <p><strong>TPS:</strong> {tps}</p>
         <p><strong>RAM:</strong> {ram} GB</p>
       </div>
 
