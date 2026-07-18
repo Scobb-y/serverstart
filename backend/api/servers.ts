@@ -1,11 +1,24 @@
 import { Router } from "express";
-import { listServers } from "../services/serverReader";
+import { listServers, runtimes } from "../services/serverReader";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
   const servers = await listServers("D:\\MC servers");
-  res.json(servers);
+  const running = await runtimes("D:\\MC servers");
+
+  console.log(running)
+
+  const merged = servers.map(server => {
+    const match = running.find(r => r.name === server.name);
+      return {
+        ...server,
+        running: !!match,
+        pid: match?.pid || null,
+        jarPath: match?.jarPath || null
+      };
+  });
+  res.json(merged);
 });
 
 export default router;

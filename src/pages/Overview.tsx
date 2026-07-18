@@ -4,7 +4,16 @@ import ServerCard from "./ServerCard";
 import "./Overview.css";
 
 export default function Overview() {
-  const [servers, setServers] = useState<string[]>([]);
+
+  type Server = {
+    name: string;
+    path: string;
+    running: boolean;
+    pid: number | null;
+    jarPath: string | null;
+  };
+
+  const [servers, setServers] = useState<Server[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/servers")
@@ -15,11 +24,11 @@ export default function Overview() {
   return (
     <DashboardLayout>
       <div className="server-grid">
-        {servers.map(name => (
+        {servers.map(server=> (
           <ServerCard
-            key={name}
-            name={name}
-            status="online"
+            key={server.name}
+            name={server.name}
+            status={server.running ? "online" : "offline"}
             players={0}
             ram={6}
             />
