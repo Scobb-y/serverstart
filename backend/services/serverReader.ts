@@ -1,9 +1,6 @@
 import { readdir } from "fs/promises";
-import { Router } from "express";
 import { spawn, ChildProcess } from "child_process";
 import path from "path";
-
-const router = Router();
 
 export async function listServers(basePath: string) {
     const servers = await readdir(basePath, { withFileTypes: true });
