@@ -14,8 +14,6 @@ router.get("/", async (req, res) => {
       return {
         ...server,
         running: !!match,
-        pid: match?.pid || null,
-        jarPath: match?.jarPath || null
       };
   });
   res.json(merged);

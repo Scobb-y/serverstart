@@ -1,8 +1,7 @@
 import { readdir } from "fs/promises";
 import { Router } from "express";
-import { spawn, exec } from "child_process";
+import { spawn, ChildProcess } from "child_process";
 import path from "path";
-
 
 const router = Router();
 
@@ -18,8 +17,6 @@ export async function listServers(basePath: string) {
 
 export interface RuntimeInfo {
     name: string;
-    pid: number | null;
-    jarPath: string;
     running: boolean;
 }
 
@@ -110,10 +107,6 @@ $procs = Get-CimInstance Win32_Process -Filter "Name = 'java.exe'" | ForEach-Obj
         ps.stderr.on("data", (d) => (stderr += d.toString()));
 
         ps.on("close", async (code) => {
-            console.log("PS EXIT CODE:", code);
-            console.log("PS RAW:", stdout);
-            console.log("PS STDERR:", stderr);
-
             if (!stdout.trim()) {
                 return resolve([]);
             }
@@ -150,8 +143,6 @@ $procs = Get-CimInstance Win32_Process -Filter "Name = 'java.exe'" | ForEach-Obj
                     if (server) {
                         results.push({
                             name: server.name,
-                            pid,
-                            jarPath: path.join(server.path, "server.jar"),
                             running: true
                         });
                         continue;
@@ -169,8 +160,6 @@ $procs = Get-CimInstance Win32_Process -Filter "Name = 'java.exe'" | ForEach-Obj
                         if (server) {
                             results.push({
                                 name: server.name,
-                                pid,
-                                jarPath,
                                 running: true
                             });
                             continue;
@@ -178,8 +167,6 @@ $procs = Get-CimInstance Win32_Process -Filter "Name = 'java.exe'" | ForEach-Obj
                     }
                 }
 
-                // No reliable match for a relative "server.jar" without a working
-                // directory — deliberately not guessing here anymore.
                 console.warn(
                     `Unmatched java.exe process (pid ${pid}): could not resolve server from CWD or jar path.`
                 );
