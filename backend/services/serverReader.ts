@@ -1,9 +1,17 @@
 import { readdir } from "fs/promises";
-import { spawn, ChildProcess } from "child_process";
+import { spawn } from "child_process";
 import path from "path";
+import sqlite3 from 'sqlite3';
+
+const dbPath = path.join(import.meta.dirname, "../data/servers.db")
+const db = new sqlite3.Database(dbPath)
 
 export async function listServers(basePath: string) {
     const servers = await readdir(basePath, { withFileTypes: true });
+
+    servers.filter(dir => dir.isDirectory()):
+        
+
     return servers
         .filter(dir => dir.isDirectory())
         .map(dir => ({
