@@ -1,5 +1,11 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 
+export interface ServerRow {
+    name: string;
+    path: string;
+    java_args?: string | null;
+}
+
 export interface RunningServer {
     child: ChildProcessWithoutNullStreams;
     name: string;

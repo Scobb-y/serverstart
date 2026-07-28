@@ -2,7 +2,7 @@
 import { spawn } from "child_process";
 import sqlite3 from "sqlite3";
 import path from "path";
-import type { RunningServer, ServerDefinition } from "../types/interfaces";
+import type { RunningServer, ServerDefinition, ServerRow} from "../types/interfaces";
 
 const dbPath = path.join(import.meta.dirname, "../data/servers.db");
 const db = new sqlite3.Database(dbPath);
@@ -13,6 +13,7 @@ export function launchServer(server: ServerDefinition) {
     if (runningServers.has(server.name)) {
         throw new Error(`Server ${server.name} is already running`);
     }
+    console.log(server.name)
 
     const args = server.java_args
         ? server.java_args.split(" ")
@@ -75,4 +76,34 @@ export function sendCommand(serverName: string, command: string) {
 
 export function stopServer(serverName: string) {
     sendCommand(serverName, "stop");
+    db.run(
+        `UPDATE servers SET last_stopped_at = datetime('now') WHERE name = ?`,
+        [serverName]
+        );
+}
+
+export function getServerFromDB(name: string): Promise<ServerDefinition> {
+    return new Promise((resolve, reject) => {
+        db.get(
+            `SELECT name, path, java_args FROM servers WHERE name = ?`,
+            [name],
+            (err, row) => {
+                if (err) return reject(err);
+
+                if (!row) {
+                    return reject(new Error(`Server '${name}' not found in database`));
+                }
+
+                const r = row as ServerRow;
+
+                const server: ServerDefinition = {
+                    name: r.name,
+                    path: r.path,
+                    java_args: r.java_args || undefined
+                };
+
+                resolve(server);
+            }
+        );
+    });
 }
