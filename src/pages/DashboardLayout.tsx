@@ -12,7 +12,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <h2 className="logo">MC Dashboard</h2>
 
         <nav className="nav">
-          <a href="#" className="nav-item">Overview</a>
           <a href="#" className="nav-item">Servers</a>
         </nav>
       </aside>

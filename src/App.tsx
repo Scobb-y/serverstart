@@ -1,5 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Overview from "./pages/Overview";
+import ServerView from "./pages/ServerView";
 
 function App() {
 
@@ -7,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Overview />} />
-        <Route path ="/server/:id element={<ServerView />}" />
+        <Route path ="/server/:id" element={<ServerView />} />
       </Routes>
     </BrowserRouter>
   );

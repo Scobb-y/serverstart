@@ -19,6 +19,19 @@ router.get("/", async (req, res) => {
   res.json(merged);
 });
 
+router.get("/:name", async (req, res) => {
+  const servers = await listServers("D:\\MC servers");
+
+  const server = servers.find(s => s.name === req.params.name);
+  if (!server) {
+    return res.status(404).json({ error: "Server not found" });
+  }
+
+  res.json(server);
+});
+
+
+
 router.post("/:name/start", async (req, res) => {
   const server = await getServerFromDB(req.params.name);
   const result = launchServer(server);

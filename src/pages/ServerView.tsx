@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
+import "./ServerCard.css";
 
 interface ServerViewData {
   name: string;
