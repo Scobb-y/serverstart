@@ -1,12 +1,15 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Overview from "./pages/Overview";
 
 function App() {
 
   return (
-    <Routes>
-      <Route path="/" element={<Overview />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Overview />} />
+        <Route path ="/server/:id element={<ServerView />}" />
+      </Routes>
+    </BrowserRouter>
   );
     
 }

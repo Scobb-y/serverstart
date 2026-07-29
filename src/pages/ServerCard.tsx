@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "./ServerCard.css";
 
 interface ServerCardProps {
@@ -25,8 +26,14 @@ export default function ServerCard({
       method: "POST"
     });
   }
+
+  const navigate = useNavigate();
   return (
-    <div className={`server-card ${status}`}>
+    <div className={`server-card ${status}`}
+      onClick={() => navigate(`/server/${serverName}`)}
+      style={{cursor: "pointer"}}
+    >
+
       <div className="server-header">
         <h3>{serverName}</h3>
         <span className="status-dot"></span>
@@ -38,8 +45,16 @@ export default function ServerCard({
       </div>
 
       <div className="server-actions">
-        <button onClick={startServer}>Start</button>
-        <button onClick={stopServer}>Stop</button>
+        <button onClick={(e) => {
+          e.stopPropagation();
+          startServer();
+        }}>Start</button>
+
+        <button onClick={(e) => {
+          e.stopPropagation();
+          stopServer();
+        }}>Stop</button>
+        
         <button>Restart</button>
       </div>
     </div>
