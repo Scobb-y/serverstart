@@ -9,6 +9,31 @@ const db = new sqlite3.Database(dbPath);
 
 export const runningServers = new Map<string, RunningServer>();
 
+function parseJavaArgs(args: string) {
+  const xmx = args.match(/-Xmx(\d+)([MG])/i);
+  const xms = args.match(/-Xms(\d+)([MG])/i);
+
+  if (!xmx) return null; 
+  if (!xms) return null;
+
+  const maxValue = parseInt(xmx[1], 10);
+  const maxUnit = xmx[2].toUpperCase();
+  const maxRamGB = maxUnit === "G" ? maxValue : maxValue / 1024;
+
+  let minRamGB = maxRamGB;
+
+  if (xms) {
+    const minValue = parseInt(xms[1], 10);
+    const minUnit = xms[2].toUpperCase();
+    minRamGB = minUnit === "G" ? minValue : minValue / 1024;
+  }
+
+  return {
+    minRamGB,
+    maxRamGB
+  };
+}
+
 export function launchServer(server: ServerDefinition) {
     if (runningServers.has(server.name)) {
         throw new Error(`Server ${server.name} is already running`);
@@ -95,11 +120,16 @@ export function getServerFromDB(name: string): Promise<ServerDefinition> {
                 }
 
                 const r = row as ServerRow;
+                const ram = parseJavaArgs(r.java_args ?? "-Xms2G -Xmx2G") ?? {
+                    minRamGB: 2,
+                    maxRamGB: 2
+                };
 
                 const server: ServerDefinition = {
                     name: r.name,
                     path: r.path,
-                    java_args: r.java_args || undefined
+                    ram: ram?.maxRamGB ?? 2,
+                    java_args: r.java_args ?? `-Xms${ram.minRamGB}G -Xmx${ram.maxRamGB}G`
                 };
 
                 resolve(server);

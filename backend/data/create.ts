@@ -1,6 +1,5 @@
 import path from 'path';
 import sqlite3 from 'sqlite3';
-import type { ServerDefinition } from "../types/interfaces";
 
 const dbPath = path.join(import.meta.dirname, "../data/servers.db")
 const db = new sqlite3.Database(dbPath)

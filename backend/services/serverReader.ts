@@ -27,7 +27,7 @@ export async function listServers(basePath: string) {
                         db.run(
                             `INSERT INTO servers (name, path, java_args, last_pid, last_started_at, last_stopped_at)
                              VALUES (?, ?, NULL, NULL, NULL, NULL)`,
-                            [name, serverPath],
+                            [name, serverPath, ],
                             (err2) => {
                                 if (err2) return reject(err2);
                                 resolve();
@@ -48,10 +48,20 @@ export async function listServers(basePath: string) {
 }
 
 export async function runtimes(basePath: string): Promise<RuntimeInfo[]> {
-    const servers = await listServers(basePath);
+  const servers = await listServers(basePath);
 
-    return servers.map(s => ({
+  return Promise.all(
+    servers.map(async s => {
+      const running = runningServers.has(s.name);
+
+      let players = 0;
+
+      return {
         name: s.name,
-        running: runningServers.has(s.name)
-    }));
+        running: running,
+        players: players,
+      };
+    })
+  );
 }
+

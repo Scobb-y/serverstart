@@ -7,10 +7,9 @@ export default function Overview() {
 
   type Server = {
     name: string;
-    path: string;
     running: boolean;
-    pid: number | null;
-    jarPath: string | null;
+    players: number;
+    ram: number;
   };
 
   const [servers, setServers] = useState<Server[]>([]);
@@ -29,8 +28,8 @@ export default function Overview() {
             key={server.name}
             name={server.name}
             status={server.running ? "online" : "offline"}
-            players={0}
-            ram={6}
+            players={server.players}
+            ram={server.ram}
             />
         ))}
       </div>
