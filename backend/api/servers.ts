@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { listServers, runtimes } from "../services/serverReader";
 import { launchServer, sendCommand, getServerFromDB } from "../services/serverManager";
-import { RuntimeInfo, ServerDefinition } from "../types/interfaces"
-import { get } from "http";
+import { RuntimeInfo } from "../types/interfaces"
+import path from "path";
+import sqlite3 from "sqlite3";
+
+
 const router = Router();
 
 router.get("/", async (req, res) => {
@@ -75,5 +78,26 @@ router.post("/:name/command", async (req, res) => {
   sendCommand(req.params.name, req.body.command);
   res.json({ ok: true });
 });
+
+router.post("/:name/java-args", async (req, res) => {
+  const dbPath = path.join(import.meta.dirname, "../data/servers.db")
+  const db = new sqlite3.Database(dbPath)
+  
+  const { java_args } = req.body;
+
+  if (!java_args) {
+    return res.status(400).json({
+      error: "java_args is required"
+    });
+  }
+
+  db.run(
+    `UPDATE servers SET java_args = ? WHERE name = ?`,
+    [java_args, req.params.name]
+  );
+
+  res.json({ success: true });
+});
+
 
 export default router;

@@ -43,12 +43,27 @@
 }
 
 .inputArgs {
-  width: 100%;
+  flex: 1;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #333;
   background: #1a1a1a;
   color: #fff;
+}
+
+.button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #2ecc71;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: #27ae60;
 }
 
 .server-logs {

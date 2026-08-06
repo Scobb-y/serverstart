@@ -12,9 +12,12 @@ interface ServerViewData {
   logs: string;
 }
 
+
 export default function ServerView() {
   const { id } = useParams();
   const [server, setServer] = useState<ServerViewData | null>(null);
+  const [javaArgs, setJavaArgs] = useState(server?.jarArgs);
+
 
   useEffect(() => {
     fetch(`http://localhost:3000/api/servers/${id}`)
@@ -22,12 +25,23 @@ export default function ServerView() {
       .then(setServer);
   }, [id]);
 
+  async function applyJavaArgs() {
+    await fetch(`http://localhost:3000/api/servers/${id}/java-args`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ java_args: javaArgs })
+    });
+
+    const res = await fetch(`http://localhost:3000/api/servers/${id}`);
+    const updated = await res.json();
+    setServer(updated);
+  }
+
   if (!server) return <DashboardLayout>Loading...</DashboardLayout>;
 
   return (
     <DashboardLayout>
-      <div className="serverview-container">
-        
+      <div className="serverview-container">        
         <div className={`server-info ${server.status}`}>
           <div className="server-header">
             <h3>{server.name}</h3>
@@ -41,7 +55,16 @@ export default function ServerView() {
 
           <div className="server-details">
             <p><strong>Java Args:</strong></p>
-            <input className="inputArgs" placeholder="Put java args here..." />
+            <input
+              className="inputArgs"
+              value={server.jarArgs}
+              onChange={e => setJavaArgs(e.target.value)}
+              placeholder="Put java args here..."
+            />
+            <button className="button" onClick={applyJavaArgs}>
+              Apply
+            </button>
+
           </div>
         </div>
 

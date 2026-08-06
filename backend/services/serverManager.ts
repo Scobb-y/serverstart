@@ -128,9 +128,10 @@ export function getServerFromDB(name: string): Promise<ServerDefinition> {
                 const server: ServerDefinition = {
                     name: r.name,
                     path: r.path,
-                    ram: ram?.maxRamGB ?? 2,
-                    java_args: r.java_args ?? `-Xms${ram.minRamGB}G -Xmx${ram.maxRamGB}G`
+                    ram: ram.maxRamGB,
+                    java_args: r.java_args && r.java_args.trim() !== "" ? r.java_args : `-Xms${ram.minRamGB}G -Xmx${ram.maxRamGB}G`
                 };
+
 
                 resolve(server);
             }
