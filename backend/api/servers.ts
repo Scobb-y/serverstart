@@ -82,7 +82,19 @@ router.post("/:name/command", async (req, res) => {
 router.post("/:name/java-args", async (req, res) => {
   const dbPath = path.join(import.meta.dirname, "../data/servers.db")
   const db = new sqlite3.Database(dbPath)
-  
+
+  const runningServers = await runtimes("D:\\MC servers");
+  const runtime = runningServers.find(r => r.name === req.params.name);
+
+  console.log("BODY:", req.body);
+  console.log("SERVER RUNNING:", runtime?.running);
+
+  if (runtime?.running) {
+    return res.status(400).json({
+      error: "Cannot update Java args while server is online."
+    });
+  }
+
   const { java_args } = req.body;
 
   if (!java_args) {
