@@ -14,13 +14,14 @@ interface ServerViewData {
 
 
 export default function ServerView() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const [server, setServer] = useState<ServerViewData | null>(null);
   const [savedArgs, setSavedArgs] = useState("");
   const [javaArgs, setJavaArgs] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/servers/${id}`)
+    fetch(`${API_URL}/api/servers/${id}`)
       .then(res => res.json())
       .then(data => {
         setServer(data);
@@ -31,7 +32,7 @@ export default function ServerView() {
 
 
   async function applyJavaArgs() {
-    const res = await fetch(`http://localhost:3000/api/servers/${id}/java-args`, {
+    const res = await fetch(`${API_URL}/api/servers/${id}/java-args`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ java_args: javaArgs })
@@ -43,7 +44,7 @@ export default function ServerView() {
       return;
     }
 
-    const updated = await fetch(`http://localhost:3000/api/servers/${id}`).then(r => r.json());
+    const updated = await fetch(`${API_URL}/api/servers/${id}`).then(r => r.json());
     setServer(updated);
     setSavedArgs(updated.jarArgs);
   }

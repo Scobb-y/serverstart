@@ -15,14 +15,16 @@ export default function ServerCard({
   players,
   ram,
 }: ServerCardProps) {
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   function startServer() {
-    fetch(`http://localhost:3000/api/servers/${serverName}/start`, {
+    fetch(`${API_URL}/api/servers/${serverName}/start`, {
       method: "POST"
     });
   }
 
   function stopServer() {
-    fetch(`http://localhost:3000/api/servers/${serverName}/stop`, {
+    fetch(`${API_URL}/api/servers/${serverName}/stop`, {
       method: "POST"
     });
   }

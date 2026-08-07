@@ -14,8 +14,10 @@ export default function Overview() {
 
   const [servers, setServers] = useState<Server[]>([]);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/servers")
+    fetch(`${API_URL}/api/servers/`)
       .then(res => res.json())
       .then(setServers);
   }, []);
