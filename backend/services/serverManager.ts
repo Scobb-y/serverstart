@@ -40,10 +40,11 @@ export function launchServer(server: ServerDefinition) {
     }
     console.log(server.name)
 
-    const args = server.java_args
-        ? server.java_args.split(" ")
-        : ["-jar", "server.jar", "nogui"];
+    const requiredArgs = ["-jar", "server.jar", "nogui"];
+    const userArgs = server.java_args ? server.java_args.split(" ") : [];
 
+    const args = [...requiredArgs, ...userArgs];
+    
     const child = spawn("java", args, {
         cwd: server.path,
         stdio: ["pipe", "pipe", "pipe"]

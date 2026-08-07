@@ -86,9 +86,6 @@ router.post("/:name/java-args", async (req, res) => {
   const runningServers = await runtimes("D:\\MC servers");
   const runtime = runningServers.find(r => r.name === req.params.name);
 
-  console.log("BODY:", req.body);
-  console.log("SERVER RUNNING:", runtime?.running);
-
   if (runtime?.running) {
     return res.status(400).json({
       error: "Cannot update Java args while server is online."
