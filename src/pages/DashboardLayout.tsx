@@ -1,4 +1,5 @@
 import "./DashboardLayout.css";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 
 interface DashboardLayoutProps {
@@ -6,13 +7,17 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const navigate = useNavigate();
   return (
     <div className="layout">
       <aside className="sidebar">
         <h2 className="logo">MC Dashboard</h2>
 
         <nav className="nav">
-          <a href="#" className="nav-item">Servers</a>
+          <a href="#" className="nav-item"
+            onClick={() => navigate(`/`)}
+            style={{cursor: "pointer"}}
+          >Servers</a>
         </nav>
       </aside>
 
