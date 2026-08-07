@@ -16,6 +16,7 @@ interface ServerViewData {
 export default function ServerView() {
   const { id } = useParams();
   const [server, setServer] = useState<ServerViewData | null>(null);
+  const [savedArgs, setSavedArgs] = useState("");
   const [javaArgs, setJavaArgs] = useState("");
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function ServerView() {
       .then(res => res.json())
       .then(data => {
         setServer(data);
+        setSavedArgs(data.jarArgs ?? "");
         setJavaArgs(data.jarArgs ?? "");
       });
   }, [id]);
@@ -43,6 +45,7 @@ export default function ServerView() {
 
     const updated = await fetch(`http://localhost:3000/api/servers/${id}`).then(r => r.json());
     setServer(updated);
+    setSavedArgs(updated.jarArgs);
   }
 
 
@@ -63,14 +66,15 @@ export default function ServerView() {
           </div>
 
           <div className="server-details">
-            <p><strong>Java Args:</strong></p>
+            <p><strong>Saved Java Args:</strong> {savedArgs}</p>
 
             <input
               className="inputArgs"
               value={javaArgs}
-              onChange={e => setJavaArgs(e.target.value)}
+              onChange={(e) => setJavaArgs(e.target.value)}
               placeholder="Put java args here..."
             />
+
 
             <button className="button" onClick={applyJavaArgs}>
               Apply
