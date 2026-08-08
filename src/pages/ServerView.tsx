@@ -19,6 +19,9 @@ export default function ServerView() {
   const [server, setServer] = useState<ServerViewData | null>(null);
   const [savedArgs, setSavedArgs] = useState("");
   const [javaArgs, setJavaArgs] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+
 
   useEffect(() => {
     fetch(`${API_URL}/api/servers/${id}`)
@@ -48,6 +51,23 @@ export default function ServerView() {
     setServer(updated);
     setSavedArgs(updated.jarArgs);
   }
+
+  async function deleteWorld() {
+    const res = await fetch(`${API_URL}/api/servers/${id}/delete-world`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert("World could not be deleted.");
+      return;
+    }
+
+    alert("World deleted successfully");
+  }
+
+
 
 
   if (!server) return <DashboardLayout>Loading...</DashboardLayout>;
@@ -81,6 +101,33 @@ export default function ServerView() {
               Apply
             </button>
           </div>
+
+          <div className="delete-world">
+            <button className="delete-button" onClick={() => setShowConfirmModal(true)}>
+              Delete World
+            </button>
+
+            {showConfirmModal && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <p>Are you sure you want to delete the World directory?</p>
+
+                  <button className="confirm-button" onClick={() => {
+                    deleteWorld(); 
+                    setShowConfirmModal(false);
+                    }}
+                  > 
+                    Yes, delete it
+                  </button>
+
+                  <button className="cancel-button" onClick={() => setShowConfirmModal(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
         </div>
 
         <div className="server-logs">
@@ -89,5 +136,6 @@ export default function ServerView() {
 
       </div>
     </DashboardLayout>
+
   );
 }

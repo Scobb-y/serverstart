@@ -1,5 +1,6 @@
 // Backend/services/serverManager.ts
 import { spawn } from "child_process";
+import fs from "fs";
 import sqlite3 from "sqlite3";
 import path from "path";
 import type { RunningServer, ServerDefinition, ServerRow} from "../types/interfaces";
@@ -107,6 +108,27 @@ export function stopServer(serverName: string) {
         [serverName]
         );
 }
+
+export async function deleteWorld(serverName: string) {
+  const rootDir = "D:/MC Servers";
+  const serverDir = path.join(rootDir, serverName);
+  const worldDir = path.join(serverDir, "World");
+
+  try {
+    await fs.promises.access(worldDir);
+  } catch {
+    return false;
+  }
+
+  try {
+    await fs.promises.rm(worldDir, { recursive: true, force: true });
+    return true;
+  } catch (err) {
+    console.error("Failed to delete world:", err);
+    return false;
+  }
+}
+
 
 export function getServerFromDB(name: string): Promise<ServerDefinition> {
     return new Promise((resolve, reject) => {

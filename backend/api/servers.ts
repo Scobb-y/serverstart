@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { listServers, runtimes } from "../services/serverReader";
-import { launchServer, sendCommand, getServerFromDB } from "../services/serverManager";
+import { launchServer, sendCommand, getServerFromDB, deleteWorld } from "../services/serverManager";
 import { RuntimeInfo } from "../types/interfaces"
 import path from "path";
 import sqlite3 from "sqlite3";
@@ -46,7 +46,6 @@ router.get("/:name", async (req, res) => {
     players: 0,
   };
 
-
   const dbInfo = await getServerFromDB(name);
 
   res.json({
@@ -67,7 +66,6 @@ router.post("/:name/start", async (req, res) => {
   const result = launchServer(server);
   res.json(result);
 });
-
 
 router.post("/:name/stop", async (req, res) => {
   sendCommand(req.params.name, "stop");
@@ -106,6 +104,21 @@ router.post("/:name/java-args", async (req, res) => {
   );
 
   res.json({ success: true });
+});
+
+router.delete("/:name/delete-world", async(req, res) => {
+  const runningServers = await runtimes("D:\\MC servers");
+  const runtime = runningServers.find(r => r.name === req.params.name);
+
+  if (runtime?.running) {
+    return res.status(400).json({
+      error: "Cannot delete world while server is online."
+    });
+  }
+
+  const success = await deleteWorld(req.params.name);
+
+  res.json({ success });
 });
 
 

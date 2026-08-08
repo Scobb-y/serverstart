@@ -62,6 +62,21 @@
   white-space: nowrap;
 }
 
+.delete-button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #cc2e2e;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.delete-button:hover {
+  background: #ae2727;
+}
+
 .button:hover {
   background: #27ae60;
 }
