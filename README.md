@@ -1,5 +1,5 @@
-You must have Java installed to run Minecraft servers. The version depends on the Minecraft version.
-Install Node.js version 18 or newer
+- You must have Java installed to run Minecraft servers. The version depends on the Minecraft version.
+- Install Node.js version 18 or newer.
 
 REQUIRED TO USE:
 - You must create a ".env" file. Inside the main file, paste this VITE_API_URL=http://(YOUR IP GOES HERE):3000
