@@ -4,13 +4,15 @@ import { launchServer, sendCommand, getServerFromDB, deleteWorld } from "../serv
 import { RuntimeInfo } from "../types/interfaces"
 import path from "path";
 import sqlite3 from "sqlite3";
+import dotenv from "dotenv";
 
-
+dotenv.config()
 const router = Router();
+const ROOT_DIR = process.env.ROOT_FOLDER!;
 
 router.get("/", async (req, res) => {
-  const servers = await listServers("D:\\MC servers");
-  const running = await runtimes("D:\\MC servers");
+  const servers = await listServers(ROOT_DIR);
+  const running = await runtimes(ROOT_DIR);
 
   const merged = await Promise.all(
     servers.map(async server => {
@@ -32,14 +34,14 @@ router.get("/", async (req, res) => {
 router.get("/:name", async (req, res) => {
   const name = req.params.name;
 
-  const servers = await listServers("D:\\MC servers");
+  const servers = await listServers(ROOT_DIR);
   const server = servers.find(s => s.name === name);
 
   if (!server) {
     return res.status(404).json({ error: "Server not found" });
   }
 
-  const runningServers = await runtimes("D:\\MC servers");
+  const runningServers = await runtimes(ROOT_DIR);
   const runtime: RuntimeInfo = runningServers.find(r => r.name === name) ?? {
     name,
     running: false,
@@ -81,7 +83,7 @@ router.post("/:name/java-args", async (req, res) => {
   const dbPath = path.join(import.meta.dirname, "../data/servers.db")
   const db = new sqlite3.Database(dbPath)
 
-  const runningServers = await runtimes("D:\\MC servers");
+  const runningServers = await runtimes(ROOT_DIR);
   const runtime = runningServers.find(r => r.name === req.params.name);
 
   if (runtime?.running) {
@@ -107,7 +109,7 @@ router.post("/:name/java-args", async (req, res) => {
 });
 
 router.delete("/:name/delete-world", async(req, res) => {
-  const runningServers = await runtimes("D:\\MC servers");
+  const runningServers = await runtimes(ROOT_DIR);
   const runtime = runningServers.find(r => r.name === req.params.name);
 
   if (runtime?.running) {

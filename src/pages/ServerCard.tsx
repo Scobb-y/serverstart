@@ -16,6 +16,7 @@ export default function ServerCard({
   ram,
 }: ServerCardProps) {
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   
   function startServer() {
     fetch(`${API_URL}/api/servers/${serverName}/start`, {
@@ -29,7 +30,6 @@ export default function ServerCard({
     });
   }
 
-  const navigate = useNavigate();
   return (
     <div className={`server-card ${status}`}
       onClick={() => navigate(`/server/${serverName}`)}
