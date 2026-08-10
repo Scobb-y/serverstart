@@ -3,12 +3,15 @@ import serverRouter from "./api/servers";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import { ipWhitelist } from "./whitelist";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, "../dist");
 
+
+app.use(ipWhitelist);
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],

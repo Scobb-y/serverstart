@@ -46,10 +46,24 @@ export function launchServer(server: ServerDefinition) {
 
     const args = [...requiredArgs, ...userArgs];
     
+    console.log("Launching:", "java", args, "cwd:", server.path);
+
     const child = spawn("java", args, {
         cwd: server.path,
         stdio: ["pipe", "pipe", "pipe"]
     });
+
+    child.on("error", (err) => {
+        const msg = `SPAWN ERROR: ${err.message}`;
+        console.error(msg);
+
+        db.run(
+            `INSERT INTO server_logs (server_id, timestamp, message)
+            VALUES ((SELECT id FROM servers WHERE name = ?), datetime('now'), ?)`,
+            [server.name, msg]
+        );
+    });
+
 
     const entry: RunningServer = {
         child,
@@ -110,7 +124,7 @@ export function stopServer(serverName: string) {
 }
 
 export async function deleteWorld(serverName: string) {
-  const rootDir = "D:/MC Servers";
+  const rootDir = process.env.ROOT_FOLDER!;
   const serverDir = path.join(rootDir, serverName);
   const worldDir = path.join(serverDir, "World");
 
