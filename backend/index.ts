@@ -7,8 +7,6 @@ import { ipWhitelist } from "./whitelist";
 
 const app = express();
 
-// Enable trusted proxy mode BEFORE using ipWhitelist
-// This ensures req.ip is the validated client IP
 app.set("trust proxy", true);
 
 const __filename = fileURLToPath(import.meta.url);

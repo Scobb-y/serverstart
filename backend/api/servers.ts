@@ -61,10 +61,6 @@ router.get("/:name", async (req, res) => {
   });
 });
 
-
-
-
-
 router.post("/:name/start", async (req, res) => {
   const server = await getServerFromDB(req.params.name);
 

@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import ipRangeCheck from "ip-range-check";
-import net from "net";
 
-// Load whitelist entries (supports IPv4, IPv6, CIDR)
 const whitelist = process.env.WHITELIST_IPS
   ? process.env.WHITELIST_IPS.split(",").map(ip => ip.trim())
   : [];
@@ -27,6 +25,7 @@ export function ipWhitelist(req: Request, res: Response, next: NextFunction) {
   const ip = normalizeIp(rawIp);
 
   if (ip && ipRangeCheck(ip, whitelist)) {
+    console.warn(`Allowed IP: ${ip}`);
     return next();
   }
 
