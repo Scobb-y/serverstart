@@ -55,9 +55,12 @@ router.get("/:name", async (req, res) => {
     status: runtime.running ? "online" : "offline",
     players: 0,
     ram: dbInfo.ram ?? 2,
-    jarArgs: dbInfo?.java_args ?? "-Xms2G -Xmx2G"
+    jarArgs: dbInfo?.java_args ?? "-Xms2G -Xmx2G",
+    version: dbInfo.version ?? "unknown",
+    logs: ""
   });
 });
+
 
 
 
@@ -107,6 +110,22 @@ router.post("/:name/java-args", async (req, res) => {
 
   res.json({ success: true });
 });
+
+router.post("/:name/version", (req, res) => {
+  const { version } = req.body;
+  const dbPath = path.join(import.meta.dirname, "../data/servers.db")
+  const db = new sqlite3.Database(dbPath)
+
+  db.run(
+    `UPDATE servers SET version = ? WHERE name = ?`,
+    [version, req.params.name],
+    (err) => {
+      if (err) return res.status(500).json({ error: "DB update failed" });
+      res.json({ success: true });
+    }
+  );
+});
+
 
 router.delete("/:name/delete-world", async(req, res) => {
   const runningServers = await runtimes(ROOT_DIR);

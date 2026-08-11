@@ -41,14 +41,20 @@ export function launchServer(server: ServerDefinition) {
     }
     console.log(server.name)
 
-    const requiredArgs = ["-jar", "server.jar", "nogui"];
+    const jarToLaunch = server.jar_name ?? "server.jar";
     const userArgs = server.java_args ? server.java_args.split(" ") : [];
+    const requiredArgs = [...userArgs, "-jar", jarToLaunch, "nogui"];
 
-    const args = [...requiredArgs, ...userArgs];
     
-    console.log("Launching:", "java", args, "cwd:", server.path);
+    console.log("Launching:", "java", requiredArgs, "cwd:", server.path);
 
-    const child = spawn("java", args, {
+    const javaVersion = getJavaVersionForMinecraft(server.version);
+
+    const javaExecutable = getJavaPath(javaVersion!); // CHANGE
+
+    console.log(`Using Java: ${javaExecutable}`);
+
+    const child = spawn(javaExecutable, requiredArgs, {
         cwd: server.path,
         stdio: ["pipe", "pipe", "pipe"]
     });
@@ -147,7 +153,7 @@ export async function deleteWorld(serverName: string) {
 export function getServerFromDB(name: string): Promise<ServerDefinition> {
     return new Promise((resolve, reject) => {
         db.get(
-            `SELECT name, path, java_args FROM servers WHERE name = ?`,
+            `SELECT name, path, java_args, version, jar_name FROM servers WHERE name = ?`,
             [name],
             (err, row) => {
                 if (err) return reject(err);
@@ -166,7 +172,9 @@ export function getServerFromDB(name: string): Promise<ServerDefinition> {
                     name: r.name,
                     path: r.path,
                     ram: ram.maxRamGB,
-                    java_args: r.java_args && r.java_args.trim() !== "" ? r.java_args : `-Xms${ram.minRamGB}G -Xmx${ram.maxRamGB}G`
+                    jar_name: r.jar_name,
+                    java_args: r.java_args && r.java_args.trim() !== "" ? r.java_args : `-Xms${ram.minRamGB}G -Xmx${ram.maxRamGB}G`,
+                    version: r.version ?? "unknown"
                 };
 
 
@@ -175,3 +183,26 @@ export function getServerFromDB(name: string): Promise<ServerDefinition> {
         );
     });
 }
+
+export function getJavaVersionForMinecraft(version: string): number {
+  const [major, minor] = version.split(".").map(Number);
+
+  if (major === 1 && minor <= 12) return 8;
+  if (major === 1 && minor <= 16) return 11;
+  if (major === 1 && minor <= 20) return 17;
+
+  return 21;
+}
+
+export function getJavaPath(javaVersion: number): string {
+  const paths: Record<number, string> = {
+    8:  process.env.JAVA_8!,
+    11: process.env.JAVA_11!,
+    17: process.env.JAVA_17!,
+    21: process.env.JAVA_21!
+  };
+
+  return paths[javaVersion];
+}
+
+

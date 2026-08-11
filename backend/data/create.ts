@@ -10,7 +10,8 @@ db.exec(`
     name TEXT UNIQUE NOT NULL,
     path TEXT NOT NULL,
     java_args TEXT,
-    auto_start INTEGER DEFAULT 0,
+    version TEXT,
+    jar_name TEXT,
     last_pid INTEGER,
     last_started_at TEXT,
     last_stopped_at TEXT

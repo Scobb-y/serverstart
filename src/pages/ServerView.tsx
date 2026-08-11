@@ -10,6 +10,7 @@ interface ServerViewData {
   players: number;
   ram: number;
   logs: string;
+  version: string;
 }
 
 
@@ -20,6 +21,9 @@ export default function ServerView() {
   const [savedArgs, setSavedArgs] = useState("");
   const [javaArgs, setJavaArgs] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [savedVersion, setSavedVersion] = useState("");
+  const [version, setVersion] = useState("");
+
 
 
 
@@ -30,6 +34,8 @@ export default function ServerView() {
         setServer(data);
         setSavedArgs(data.jarArgs ?? "");
         setJavaArgs(data.jarArgs ?? "");
+        setSavedVersion(data.version ?? "");
+        setVersion(data.version ?? "");
       });
   }, [id]);
 
@@ -67,6 +73,26 @@ export default function ServerView() {
     alert("World deleted successfully");
   }
 
+  async function updateVersion() {
+    const res = await fetch(`${API_URL}/api/servers/${id}/version`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ version })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error);
+      return;
+    }
+
+    const updated = await fetch(`${API_URL}/api/servers/${id}`).then(r => r.json());
+    setServer(updated);
+    setSavedVersion(updated.version);
+    setVersion(updated.version);
+  }
+
+
 
 
 
@@ -87,6 +113,26 @@ export default function ServerView() {
           </div>
 
           <div className="server-details">
+            <p><strong>Minecraft Version:</strong> {savedVersion}</p>
+
+            <select
+              className="version-dropdown"
+              value={version}
+              onChange={(e) => setVersion(e.target.value)}
+            >
+              <option value="1.12.2">1.12.2</option>
+              <option value="1.16.5">1.16.5</option>
+              <option value="1.17.1">1.17.1</option>
+              <option value="1.18.2">1.18.2</option>
+              <option value="1.19.4">1.19.4</option>
+              <option value="1.20.6">1.20.6</option>
+              <option value="1.21.11">1.21.11</option>
+            </select>
+
+            <button className="button" onClick={updateVersion}>
+              Update Version
+            </button>
+
             <p><strong>Saved Java Args:</strong> {savedArgs}</p>
 
             <input
