@@ -1,16 +1,32 @@
 import { Request, Response, NextFunction } from "express";
+import ipRangeCheck from "ip-range-check";
+import net from "net";
 
+// Load whitelist entries (supports IPv4, IPv6, CIDR)
 const whitelist = process.env.WHITELIST_IPS
   ? process.env.WHITELIST_IPS.split(",").map(ip => ip.trim())
   : [];
 
-export function ipWhitelist(req: Request, res: Response, next: NextFunction) {
-  const forwarded = req.headers["x-forwarded-for"];
-  const ip = typeof forwarded === "string"
-    ? forwarded.split(",")[0]
-    : req.socket.remoteAddress;
+function normalizeIp(ip: string | undefined): string | null {
+  if (!ip) return null;
 
-  if (ip && whitelist.includes(ip)) {
+  if (ip.startsWith("::ffff:")) {
+    return ip.replace("::ffff:", "");
+  }
+
+  const zoneIndex = ip.indexOf("%");
+  if (zoneIndex !== -1) {
+    return ip.substring(0, zoneIndex);
+  }
+
+  return ip;
+}
+
+export function ipWhitelist(req: Request, res: Response, next: NextFunction) {
+  const rawIp = req.ip;
+  const ip = normalizeIp(rawIp);
+
+  if (ip && ipRangeCheck(ip, whitelist)) {
     return next();
   }
 
