@@ -1,0 +1,9 @@
+Purely an example, change as needed
+
+VITE_API_URL=http://(YOUR IP GOES HERE):(DESIGNATED PORT)
+ROOT_FOLDER="D:/MC Servers"
+WHITELIST_IPS=
+JAVA_8=C:\Program Files\Java\jdk-1.8\bin\java.exe
+JAVA_11=C:\Program Files\Java\jdk-11.0.31\bin\java.exe
+JAVA_17=C:\Program Files\Java\jdk-17\bin\java.exe
+JAVA_21=C:\Program Files\Java\jdk-21\bin\java.exe
