@@ -130,7 +130,11 @@ export function stopServer(serverName: string) {
 export async function deleteWorld(serverName: string) {
   const rootDir = process.env.ROOT_FOLDER!;
   const serverDir = path.join(rootDir, serverName);
-  const worldDir = path.join(serverDir, "World");
+  const worldFolder =
+    serverName.toLowerCase().includes("dregora")
+        ? "DregoraRL"
+        : "World";
+const worldDir = path.join(serverDir, worldFolder);
 
   try {
     await fs.promises.access(worldDir);
