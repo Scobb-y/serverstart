@@ -6,7 +6,7 @@ const db = new sqlite3.Database(dbPath)
 
 export default db;
 
-db.exec(`
+/*db.exec(`
     CREATE TABLE servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL,
@@ -27,4 +27,4 @@ db.exec(`
         FOREIGN KEY(server_id) REFERENCES servers(id)
     );
 
-`);
+`);*/
