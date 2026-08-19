@@ -20,10 +20,11 @@ export default function ServerView() {
   const [server, setServer] = useState<ServerViewData | null>(null);
   const [savedArgs, setSavedArgs] = useState("");
   const [javaArgs, setJavaArgs] = useState("");
+  const [minRam, setMinRam] = useState("");
+  const [maxRam, setMaxRam] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [savedVersion, setSavedVersion] = useState("");
   const [version, setVersion] = useState("");
-
 
 
 
@@ -36,6 +37,9 @@ export default function ServerView() {
         setJavaArgs(data.jarArgs ?? "");
         setSavedVersion(data.version ?? "");
         setVersion(data.version ?? "");
+        const ram = parseRam(data.jarArgs ?? "");
+        setMinRam(String(ram.min));
+        setMaxRam(String(ram.max));
       });
   }, [id]);
 
@@ -92,9 +96,18 @@ export default function ServerView() {
     setVersion(updated.version);
   }
 
+  function parseRam(args: string) {
+    const minMatch = args.match(/-Xms(\d+)([MG])/i);
+    const maxMatch = args.match(/-Xmx(\d+)([MG])/i);
 
+    const convert = (value: number, unit: string) =>
+      unit.toUpperCase() === "G" ? value : value / 1024;
 
-
+    return {
+      min: minMatch ? convert(Number(minMatch[1]), minMatch[2]) : "",
+      max: maxMatch ? convert(Number(maxMatch[1]), maxMatch[2]) : ""
+    };
+  }
 
   if (!server) return <DashboardLayout>Loading...</DashboardLayout>;
 

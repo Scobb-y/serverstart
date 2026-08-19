@@ -5,6 +5,7 @@ import { RuntimeInfo } from "../types/interfaces"
 import path from "path";
 import sqlite3 from "sqlite3";
 import dotenv from "dotenv";
+import db from "../data/create";
 
 dotenv.config()
 const router = Router();
@@ -79,9 +80,6 @@ router.post("/:name/command", async (req, res) => {
 });
 
 router.post("/:name/java-args", async (req, res) => {
-  const dbPath = path.join(import.meta.dirname, "../data/servers.db")
-  const db = new sqlite3.Database(dbPath)
-
   const runningServers = await runtimes(ROOT_DIR);
   const runtime = runningServers.find(r => r.name === req.params.name);
 
@@ -109,8 +107,6 @@ router.post("/:name/java-args", async (req, res) => {
 
 router.post("/:name/version", (req, res) => {
   const { version } = req.body;
-  const dbPath = path.join(import.meta.dirname, "../data/servers.db")
-  const db = new sqlite3.Database(dbPath)
 
   db.run(
     `UPDATE servers SET version = ? WHERE name = ?`,

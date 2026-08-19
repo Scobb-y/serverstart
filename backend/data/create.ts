@@ -4,6 +4,8 @@ import sqlite3 from 'sqlite3';
 const dbPath = path.join(import.meta.dirname, "../data/servers.db")
 const db = new sqlite3.Database(dbPath)
 
+export default db;
+
 db.exec(`
     CREATE TABLE servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

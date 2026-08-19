@@ -4,9 +4,8 @@ import { runningServers } from "./serverManager";
 import type { RuntimeInfo } from "../types/interfaces";
 import sqlite3 from "sqlite3";
 import fs from "fs";
+import db from "../data/create";
 
-const dbPath = path.join(import.meta.dirname, "../data/servers.db");
-const db = new sqlite3.Database(dbPath);
 
 export async function listServers(basePath: string) {
     const entries = await readdir(basePath, { withFileTypes: true });

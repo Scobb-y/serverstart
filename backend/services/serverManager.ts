@@ -4,9 +4,7 @@ import fs from "fs";
 import sqlite3 from "sqlite3";
 import path from "path";
 import type { RunningServer, ServerDefinition, ServerRow} from "../types/interfaces";
-
-const dbPath = path.join(import.meta.dirname, "../data/servers.db");
-const db = new sqlite3.Database(dbPath);
+import db from "../data/create";
 
 export const runningServers = new Map<string, RunningServer>();
 
